@@ -33,6 +33,7 @@ const tic_tac_toe = {
         let position;
         while(true){
             position = Math.floor(Math.random() * 10);
+            console.log(position);
             if(this.board[position] === '')
                 break ;
         }
@@ -56,7 +57,7 @@ const tic_tac_toe = {
         } else {
             this.symbols.change();
 
-            if(this.maquina && human){
+            if(this.maquina && human && !this.is_game_over()){
                 let pos = this.make_play_pc();
                 this.make_play(pos,false);
             }
@@ -81,6 +82,7 @@ const tic_tac_toe = {
                 this.board[ this.winning_sequences[i][1] ] == symbol &&
                 this.board[ this.winning_sequences[i][2] ] == symbol) {
                 console.log('winning sequences INDEX:' + i);
+                //window.alert(`Jogador ${this.symbols.options[this.symbols.turn_index]} Ganhou!`);
                 return i;
             }
         };
@@ -111,6 +113,7 @@ const tic_tac_toe = {
         if(maquina){
             btns[0].style.color = "white";
             btns[1].style.color = "yellow";
+            btns[0].style.visibility = "hidden";
         }else{
             btns[1].style.color = "white";
             btns[0].style.color = "yellow";
