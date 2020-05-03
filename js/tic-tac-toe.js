@@ -12,6 +12,7 @@ const tic_tac_toe = {
             },
     container_element: null,
     gameover: false,
+    maquina: false,
     winning_sequences: [
                         [0,1,2],
                         [3,4,5],
@@ -28,7 +29,17 @@ const tic_tac_toe = {
         this.container_element = container;
     },
 
-    make_play(position) {
+    make_play_pc(){
+        let position;
+        while(true){
+            position = Math.floor(Math.random() * 10);
+            if(this.board[position] === '')
+                break ;
+        }
+        return position;
+    },
+
+    make_play(position, human = true) {
         if (this.gameover || this.board[position] !== '') return false;
 
         const currentSymbol = this.symbols.options[this.symbols.turn_index];
@@ -44,6 +55,11 @@ const tic_tac_toe = {
             this.stylize_winner_sequence(this.winning_sequences[winning_sequences_index]);
         } else {
             this.symbols.change();
+
+            if(this.maquina && human){
+                let pos = this.make_play_pc();
+                this.make_play(pos,false);
+            }
         }
 
         return true;
@@ -86,14 +102,20 @@ const tic_tac_toe = {
         this.gameover = false;       
     },
 
-    restart() {
-        if (this.is_game_over() || this.gameover) {
-            this.start();
-            console.log('this game has been restarted!')
-        } else if (confirm('Are you sure you want to restart this game?')) {
-            this.start();
-            console.log('this game has been restarted!')
+    restart(maquina = false) {
+
+        this.maquina = maquina;
+        this.start();
+
+        let btns = document.getElementsByClassName("btn");
+        if(maquina){
+            btns[0].style.color = "white";
+            btns[1].style.color = "yellow";
+        }else{
+            btns[1].style.color = "white";
+            btns[0].style.color = "yellow";
         }
+        console.log('this game has been restarted!')
     },
 
     draw() {
