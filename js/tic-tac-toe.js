@@ -113,7 +113,6 @@ const tic_tac_toe = {
         if(maquina){
             btns[0].style.color = "white";
             btns[1].style.color = "yellow";
-            btns[0].style.visibility = "hidden";
         }else{
             btns[1].style.color = "white";
             btns[0].style.color = "yellow";
