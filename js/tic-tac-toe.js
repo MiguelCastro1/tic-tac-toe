@@ -110,14 +110,19 @@ const tic_tac_toe = {
         this.start();
 
         let btns = document.getElementsByClassName("btn");
+        console.log('this game has been restarted!')
         if(maquina){
             btns[0].style.color = "white";
             btns[1].style.color = "yellow";
+            if(this.symbols.turn_index == 0){
+                let pos = this.make_play_pc();
+                this.make_play(pos,false);
+            }
+    
         }else{
             btns[1].style.color = "white";
             btns[0].style.color = "yellow";
         }
-        console.log('this game has been restarted!')
     },
 
     draw() {
