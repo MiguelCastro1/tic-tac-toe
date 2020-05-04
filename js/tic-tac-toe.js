@@ -12,6 +12,7 @@ const tic_tac_toe = {
             },
     container_element: null,
     gameover: false,
+    nivel: 0,
     maquina: false,
     winning_sequences: [
                         [0,1,2],
@@ -30,13 +31,39 @@ const tic_tac_toe = {
     },
 
     make_play_pc(){
-        let position;
+        let position = -1;
+        let checked = false;
         while(true){
-            position = Math.floor(Math.random() * 10);
-            console.log(position);
-            if(this.board[position] === '')
-                break ;
+            if(this.nivel == 1){
+                position = Math.floor(Math.random() * 10);
+                if(this.board[position] === '')
+                    break;
+
+            }else if(this.nivel == 2){
+                if(!checked){
+                    checked = true;
+                    let turn = this.symbols.options[this.symbols.turn_index];
+                    position = this.check_possible_winning_sequences(turn);
+                    if(position !== -1)
+                        break;
+
+                    turn = this.symbols.options[1 - this.symbols.turn_index];
+                    console.log("turn " +position);
+                    position = this.check_possible_winning_sequences(turn);
+                    if(position != -1)
+                        break;
+
+                   
+                }else{
+                    position = Math.floor(Math.random() * 10);
+                    if(this.board[position] === '')
+                        break;
+                }
+            }else if(this.nivel == 3){
+             
+            }
         }
+        console.log(position);
         return position;
     },
 
@@ -75,6 +102,29 @@ const tic_tac_toe = {
         });
       },
 
+    
+      check_possible_winning_sequences(symbol) {
+        let postition = -1;
+        for ( i in this.winning_sequences ) {
+            if (this.board[ this.winning_sequences[i][0] ] == symbol  &&
+                this.board[ this.winning_sequences[i][1] ] == symbol &&
+                this.board[ this.winning_sequences[i][2] ] == '') {
+                return this.winning_sequences[i][2];
+            }
+            if (this.board[ this.winning_sequences[i][0] ] == ''  &&
+                this.board[ this.winning_sequences[i][1] ] == symbol &&
+                this.board[ this.winning_sequences[i][2] ] == symbol) {
+                return this.winning_sequences[i][0];
+            }
+            if (this.board[ this.winning_sequences[i][0] ] == symbol  &&
+                this.board[ this.winning_sequences[i][1] ] == '' &&
+                this.board[ this.winning_sequences[i][2] ] == symbol) {
+                return this.winning_sequences[i][1];
+            }
+        }
+        
+        return -1;
+    },
     check_winning_sequences(symbol) {
 
         for ( i in this.winning_sequences ) {
@@ -104,9 +154,10 @@ const tic_tac_toe = {
         this.gameover = false;       
     },
 
-    restart(maquina = false) {
+    restart(maquina = false,nivel = 0) {
 
         this.maquina = maquina;
+        this.nivel = nivel;
         this.start();
 
         let btns = document.getElementsByClassName("btn");
@@ -118,7 +169,8 @@ const tic_tac_toe = {
                 let pos = this.make_play_pc();
                 this.make_play(pos,false);
             }
-    
+            opcoes("hidden");
+            
         }else{
             btns[1].style.color = "white";
             btns[0].style.color = "yellow";

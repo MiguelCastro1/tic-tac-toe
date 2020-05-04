@@ -28,12 +28,16 @@ body {
 
 .btn {
   font-size: medium;
+  display: inline-block;
   border: 5px solid #2c3e50;
   background-color: #34495e;
   color: white;
   margin-top: 10px;
   padding: 10px 20px
+  
 }
+
+
 
 .game > div.winner {
   background: yellow;
