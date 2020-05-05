@@ -5,7 +5,7 @@ const tic_tac_toe = {
     board: ['','','','','','','','',''],
     symbols: {
                 options: ['O','X'],
-                turn_index: 0,
+                turn_index: 1,
                 change(){
                     this.turn_index = ( this.turn_index === 0 ? 1:0 );
                 }
@@ -33,6 +33,7 @@ const tic_tac_toe = {
     make_play_pc(){
         let position = -1;
         let checked = false;
+        
         while(true){
             if(this.nivel == 1){
                 position = Math.floor(Math.random() * 10);
@@ -52,21 +53,22 @@ const tic_tac_toe = {
                     position = this.check_possible_winning_sequences(turn);
                     if(position != -1)
                         break;
-
-                   
                 }else{
                     position = Math.floor(Math.random() * 10);
                     if(this.board[position] === '')
                         break;
                 }
             }else if(this.nivel == 3){
-             
+                //MinMax algoritimo
+                position = this.findBestMove();
+                break ;
             }
         }
         return position;
     },
 
     make_play(position, human = true) {
+    
         if (this.gameover || this.board[position] !== '') return false;
 
         const currentSymbol = this.symbols.options[this.symbols.turn_index];
@@ -130,7 +132,7 @@ const tic_tac_toe = {
             if (this.board[ this.winning_sequences[i][0] ] == symbol  &&
                 this.board[ this.winning_sequences[i][1] ] == symbol &&
                 this.board[ this.winning_sequences[i][2] ] == symbol) {
-                console.log('winning sequences INDEX:' + i);
+                //console.log('winning sequences INDEX:' + i);
                 //window.alert(`Jogador ${this.symbols.options[this.symbols.turn_index]} Ganhou!`);
                 return i;
             }
@@ -154,13 +156,13 @@ const tic_tac_toe = {
     },
 
     restart(maquina = false,nivel = 0) {
-
         this.maquina = maquina;
         this.nivel = nivel;
         this.start();
 
         let btns = document.getElementsByClassName("btn");
         console.log('this game has been restarted!')
+
         if(maquina){
             btns[0].style.color = "white";
             btns[1].style.color = "yellow";
@@ -179,4 +181,102 @@ const tic_tac_toe = {
     draw() {
         this.container_element.innerHTML = this.board.map((element, index) => `<div onclick="tic_tac_toe.make_play('${index}')"> ${element} </div>`).reduce((content, current) => content + current);
     },
+
+    findBestMove() { 
+        let bestVal = -1000;
+        let index = 0; 
+        // Traverse all cells, evaluate minimax function 
+        // for all empty cells. And return the cell 
+        // with optimal value. 
+        for (let i = 0; i < this.board.length; i++) {
+             // Check if cell is empt             
+            if (this.board[i] === '') { 
+                // Make the move                 
+                this.board[i] = 'O';
+
+                // compute evaluation function for this 
+                // move. 
+                let moveVal = this.minimax(0, false); 
+                // Undo the move 
+                this.board[i] = '';				 
+
+                // If the value of the current move is 
+                // more than the best value, then update 
+                // best/ 
+                if (moveVal > bestVal){
+                    bestVal = moveVal; 
+                    index = i;
+                }
+            }
+        } 
+        return index;
+    },
+
+    // This is the minimax function. It considers all 
+    // the possible ways the game can go and returns 
+    // the value of the board 
+    minimax(depth,isMax)  { 
+        let  score = this.check_winning_sequences('O'); 
+        // If Maximizer has won the game 
+        // return his/her evaluated score 
+        if (score !== -1) 
+            return +10; 
+
+        score = this.check_winning_sequences('X'); 
+        // If Minimizer has won the game 
+        // return his/her evaluated score 
+        if (score !== -1) 
+            return -10; 
+
+        // If there are no more moves and 
+        // no winner then it is a tie 
+        if(this.is_game_over()) {
+            return 0; 
+        }
+
+        // If this maximizer's move 
+        if (isMax){ 
+            let  best = -1000; 
+
+            // Traverse all cells 
+            for (let i = 0; i < this.board.length; i++){ 
+                // Check if cell is empty 
+                if (this.board[i] === '') 
+                { 
+                    // Make the move 
+                    this.board[i] = 'O';					
+
+                    // Call minimax recursively and choose 
+                    // the maximum value 
+                    best = Math.max(best, this.minimax(depth + 1, !isMax)); 
+                                    
+                    // Undo the move 
+                    this.board[i] = '';
+                } 
+            } 
+            return best; 
+        } 
+
+        // If this minimizer's move 
+        else{ 
+            let best = 1000; 
+
+            // Traverse all cells 
+            for (let i = 0; i < this.board.length; i++) { 
+                // Check if cell is empty 
+                if (this.board[i] === '') { 
+                    // Make the move 
+                    this.board[i] = 'X';			
+
+                    // Call minimax recursively and choose 
+                    // the minimum value 
+                    best = Math.min(best, this.minimax(depth + 1, !isMax)); 
+
+                    // Undo the move 
+                    this.board[i] = '';
+                } 
+            } 
+            return best; 
+        } 
+    }
 };
