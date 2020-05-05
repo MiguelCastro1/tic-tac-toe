@@ -42,13 +42,13 @@ const tic_tac_toe = {
             }else if(this.nivel == 2){
                 if(!checked){
                     checked = true;
+                    
                     let turn = this.symbols.options[this.symbols.turn_index];
                     position = this.check_possible_winning_sequences(turn);
                     if(position !== -1)
                         break;
 
                     turn = this.symbols.options[1 - this.symbols.turn_index];
-                    console.log("turn " +position);
                     position = this.check_possible_winning_sequences(turn);
                     if(position != -1)
                         break;
@@ -63,7 +63,6 @@ const tic_tac_toe = {
              
             }
         }
-        console.log(position);
         return position;
     },
 
